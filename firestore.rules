@@ -1,0 +1,73 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function perfil() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isActive() {
+      return isSignedIn() && perfil().activo == true;
+    }
+
+    function isAdmin() {
+      return isActive() && perfil().rol == 'admin';
+    }
+
+    function isVendedor() {
+      return isActive() && (perfil().rol == 'vendedor' || perfil().rol == 'admin');
+    }
+
+    // Cada usuario puede leer su propio perfil; solo el admin puede leer/crear/editar todos.
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // Categorías: cualquier usuario activo las lee; solo el admin las crea/edita/borra.
+    match /categories/{catId} {
+      allow read: if isVendedor();
+      allow write: if isAdmin();
+    }
+
+    // Productos: catálogo visible para vendedor y admin. El admin puede crear,
+    // borrar y editar cualquier campo. El vendedor NO puede editar productos
+    // libremente — solo puede actualizar stock/estado, y únicamente como parte
+    // de la transacción segura que registra una venta (ver src/firebase/sales.js).
+    match /products/{productId} {
+      allow read: if isVendedor();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (
+        isVendedor() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock', 'estado'])
+      );
+    }
+
+    // Ventas: el vendedor puede crear (registrar una venta) y leer; solo el admin
+    // puede editar/anular.
+    match /sales/{saleId} {
+      allow read: if isVendedor();
+      allow create: if isVendedor();
+      allow update, delete: if isAdmin();
+    }
+
+    // Solicitudes de autorización (descuento / anulación): el vendedor crea, el
+    // admin resuelve.
+    match /authRequests/{reqId} {
+      allow read: if isVendedor();
+      allow create: if isVendedor();
+      allow update: if isAdmin();
+    }
+
+    // Cuadre de caja por turno.
+    match /cashRegister/{regId} {
+      allow read: if isVendedor();
+      allow create, update: if isVendedor();
+    }
+  }
+}
