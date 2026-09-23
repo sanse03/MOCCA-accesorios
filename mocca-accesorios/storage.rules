@@ -1,0 +1,15 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /productos/{allPaths=**} {
+      // Cualquier usuario con sesión iniciada (vendedor o admin) puede ver las fotos.
+      allow read: if request.auth != null;
+
+      // Solo el admin puede subir o borrar fotos.
+      allow write: if request.auth != null &&
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.rol == 'admin' &&
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.activo == true;
+    }
+  }
+}
