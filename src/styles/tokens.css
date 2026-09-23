@@ -1,0 +1,66 @@
+:root {
+  color-scheme: light;
+
+  /* Color — paleta con nombre que definiste (Sky, Lavender, Butter, Matcha,
+     Pink, Tangerine). El nombre de las variables quedó igual para no tocar
+     nada más que el color; Tangerine ahora hace el rol principal (antes teal),
+     Sky el rol secundario (antes ámbar). */
+  --color-bg: #FFFFFF;
+  --color-surface: #FFFFFF;
+  --color-ink: #1E3336;
+  --color-ink-soft: #4E6266;
+  --color-teal: #FF8F45;
+  --color-teal-dark: #A55C2C;
+  --color-amber: #7FB9E6;
+  --color-tint-soft: #FFF4EC;
+  --color-border: #E0B996;
+  --color-agotado: #C1524B;
+
+  /* Paleta con nombre (tal como la subiste) */
+  --brand-sky: #7FB9E6;
+  --brand-lavender: #D6BEEA;
+  --brand-butter: #F4D77A;
+  --brand-matcha: #B7C96A;
+  --brand-pink: #F98BA9;
+  --brand-tangerine: #FF8F45;
+
+  /* Tipografía — geométrica en mayúsculas, como tu catálogo actual */
+  --font-display: 'Poppins', -apple-system, sans-serif;
+  --font-body: 'Poppins', -apple-system, sans-serif;
+
+  /* Layout */
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-pill: 999px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --max-width: 1100px;
+  --nav-height: 64px;
+
+  /* Sombra de tarjeta — reemplaza el borde plano por elevación real */
+  --shadow-card: 0 10px 28px -6px rgba(30, 51, 54, 0.14), 0 2px 6px rgba(30, 51, 54, 0.06);
+  --shadow-hero: 0 16px 32px -10px rgba(30, 51, 54, 0.35);
+
+  /* Escala de z-index */
+  --z-sticky: 5;
+  --z-nav: 10;
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+  }
+}
